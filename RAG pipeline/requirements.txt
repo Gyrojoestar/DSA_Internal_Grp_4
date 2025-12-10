@@ -1,0 +1,11 @@
+Flask
+catboost
+pandas
+openai
+joblib
+python-dotenv
+langchain-core
+langchain-openai
+langchain-classic
+langchain-community
+numpy
