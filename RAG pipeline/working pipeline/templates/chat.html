@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Intelligence Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling for a cleaner look */
+        #chat-window::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-window::-webkit-scrollbar-thumb {
+            background-color: #4b5563; /* gray-600 */
+            border-radius: 4px;
+        }
+        #chat-window::-webkit-scrollbar-track {
+            background: #1f2937; /* gray-800 */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 sm:p-8">
+
+<div class="max-w-6xl mx-auto space-y-8">
+    
+    <header class="bg-gray-800 shadow-xl rounded-lg p-6">
+        <h1 class="text-4xl font-bold text-blue-400">
+            Car Price Intelligence Platform
+        </h1>
+        <p class="text-gray-400 mt-2">Expert MMR Prediction & Market Analysis</p>
+    </header>
+    
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-4">
+            
+            <div class="bg-gray-800 rounded-lg shadow-xl p-6 h-full flex flex-col">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2">Analysis Log</h2>
+                
+                <div id="chat-window" class="flex-grow border border-gray-700 h-96 overflow-y-scroll p-4 mb-4 bg-gray-900 rounded-lg shadow-inner">
+                    
+                    <div class="message bot bg-gray-700 text-gray-300 p-4 rounded-xl shadow-lg mb-3 max-w-full">
+                        <p class="font-bold text-blue-400 text-lg">System Ready:</p>
+                        <p class="mt-2 text-sm">
+                            I am a specialized AI capable of predicting **Manheim Market Report (MMR)** and **Retail Selling Price** using a sophisticated CatBoost model, and providing real-time market context.
+                        </p>
+                        <p class="mt-4 font-bold text-gray-300">Required Prediction Parameters:</p>
+                        <ul class="list-disc list-inside ml-4 text-xs space-y-1 text-gray-400">
+                            <li>Make, Model, Body, Transmission, State</li>
+                            <li>Condition, Odometer, Car Age (years)</li>
+                            <li>Sale Year/Month, Seller Category (Financial, Fleet, Rental, Manufacturer)</li>
+                        </ul>
+                        <em class="block mt-4 text-xs text-blue-300">Ask for a price prediction or market trends (e.g., "What are the latest market trends for Tesla?")</em>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-auto">
+                    <input type="text" id="user-input" placeholder="Enter your vehicle details or market query..." 
+                           class="flex-grow p-4 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out shadow-inner placeholder-gray-400">
+                    
+                    <button id="send-button" 
+                            class="p-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-150 ease-in-out min-w-[100px] disabled:opacity-50 disabled:cursor-not-allowed">
+                        Analyze
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1 space-y-4">
+            <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-200 border-b border-gray-700 pb-2">Key Insights</h2>
+                <div class="text-gray-400 space-y-4 text-sm">
+                    <p class="flex items-start">
+                        <span class="text-blue-400 mr-3 mt-1">&#10003;</span>
+                        **Model**: CatBoost Regressor (Multi-Output)
+                    </p>
+                    <p class="flex items-start">
+                        <span class="text-blue-400 mr-3 mt-1">&#10003;</span>
+                        **Outputs**: Log-Transformed MMR and Selling Price.
+                    </p>
+                    <p class="flex items-start">
+                        <span class="text-blue-400 mr-3 mt-1">&#10003;</span>
+                        **RAG**: Integrated with market news for contextual pricing.
+                    </p>
+                    <p class="pt-2 border-t border-gray-700">
+                        <strong class="text-gray-200">Tip:</strong> Use the **MarketNewsRetriever** for broader industry context before settling on a price.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    function appendMessage(sender, text) {
+        const messageDiv = document.createElement('div');
+        
+        // Tailwind classes for professional dark theme messages
+        if (sender === 'user') {
+            // User message: Teal background, right-aligned, professional rounded corners
+            messageDiv.className = 'message user bg-teal-600 text-white p-4 rounded-t-xl rounded-l-xl max-w-xl ml-auto shadow-xl mb-4 text-sm';
+        } else {
+            // Bot message: Blue background (for results) or Gray (for context), left-aligned
+            let bgColor = text.includes("PREDICTION_RESULT") ? 'bg-blue-600' : 'bg-gray-700';
+            messageDiv.className = `message bot ${bgColor} text-gray-100 p-4 rounded-t-xl rounded-r-xl max-w-2xl mr-auto shadow-xl mb-4 text-sm`;
+        }
+        
+        // Use innerHTML for formatting and handle newlines
+        messageDiv.innerHTML = text.replace(/\n/g, '<br>'); 
+        chatWindow.appendChild(messageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function sendMessage() {
+        const question = userInput.value.trim();
+        if (question === "") return;
+
+        appendMessage('user', question);
+        userInput.value = '';
+        sendButton.disabled = true;
+        sendButton.textContent = 'Analyzing...';
+        sendButton.classList.add('animate-pulse');
+
+        fetch('/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ question: question }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            appendMessage('bot', data.response);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            appendMessage('bot', '🚨 Analysis Error: The platform encountered an unexpected error. Please check backend logs.');
+        })
+        .finally(() => {
+            sendButton.disabled = false;
+            sendButton.textContent = 'Analyze';
+            sendButton.classList.remove('animate-pulse');
+        });
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+</body>
+</html>
