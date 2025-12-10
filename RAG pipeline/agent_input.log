@@ -1,8 +1,0 @@
-RAW_INPUT: {"make": "Toyota", "model": "Camry", "body": "Sedan", "transmission": "Automatic", "state": "CA", "condition_category": "Good", "odometer": 50000, "car_age": 6, "sale_year": 2024, "sale_month": 12, "seller_category": "Fleet", "prediction_type": "both"}
-
-RAW_INPUT: {"make": "Toyota", "model": "Camry", "body": "Sedan", "transmission": "Automatic", "state": "CA", "condition_category": "Good", "odometer": 50000, "car_age": 6, "sale_year": 2024, "sale_month": 12, "seller_category": "Fleet", "prediction_type": "both"}
-
-RAW_INPUT: {"make": "Ford", "model": "F-150", "body": "Truck", "transmission": "Automatic", "state": "TX", "condition_category": "Good", "odometer": 30000, "car_age": 4, "sale_year": 2024, "sale_month": 3, "seller_category": "Manufacturer", "prediction_type": "mmr"}
-
-RAW_INPUT: {"make": "Ford", "model": "F-150", "body": "Truck", "transmission": "Automatic", "state": "TX", "condition_category": "Good", "odometer": 30000, "car_age": 4, "sale_year": 2024, "sale_month": 3, "seller_category": "Manufacturer", "prediction_type": "mmr"}
-
